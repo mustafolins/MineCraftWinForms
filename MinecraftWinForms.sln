@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinecraftWinForms", "MinecraftWinForms\MinecraftWinForms.csproj", "{775AC1C6-7412-4411-8DCD-B554A1C19270}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MineCraftShared", "MineCraftShared\MineCraftShared.csproj", "{EC58AB7F-DCCF-41DC-9AFF-3C95DC5B2C39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{775AC1C6-7412-4411-8DCD-B554A1C19270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{775AC1C6-7412-4411-8DCD-B554A1C19270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{775AC1C6-7412-4411-8DCD-B554A1C19270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{775AC1C6-7412-4411-8DCD-B554A1C19270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC58AB7F-DCCF-41DC-9AFF-3C95DC5B2C39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC58AB7F-DCCF-41DC-9AFF-3C95DC5B2C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC58AB7F-DCCF-41DC-9AFF-3C95DC5B2C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC58AB7F-DCCF-41DC-9AFF-3C95DC5B2C39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {426FA982-2002-40C1-B06F-1A2696BCB4C8}
+	EndGlobalSection
+EndGlobal
