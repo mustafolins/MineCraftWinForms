@@ -4,6 +4,12 @@ namespace MineCraftShared
 {
     public interface IData
     {
-        Color Color { get; set; }
+        Point Point { get; set; }
+        Placement Place { get; set; }
+    }
+
+    public enum Placement
+    {
+        FTL, FTR, FBL, FBR, BTL, BTR, BBL, BBR
     }
 }

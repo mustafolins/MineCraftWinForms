@@ -9,6 +9,7 @@ namespace MineCraftShared
 {
     public class Data : IData
     {
-        public Color Color { get; set; }
+        public Point Point { get; set; }
+        public Placement Place { get; set; }
     }
 }

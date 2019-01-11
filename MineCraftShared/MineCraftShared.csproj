@@ -45,9 +45,11 @@
   <ItemGroup>
     <Compile Include="Data.cs" />
     <Compile Include="IData.cs" />
-    <Compile Include="IMatrix.cs" />
-    <Compile Include="Object3d.cs" />
+    <Compile Include="ICube.cs" />
+    <Compile Include="IRotation.cs" />
+    <Compile Include="Cube.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rotation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

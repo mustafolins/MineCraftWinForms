@@ -1,10 +1,10 @@
 ﻿namespace MineCraftShared
 {
-    public interface IMatrix
+    public interface ICube
     {
         int Depth { get; set; }
-        int Length { get; set; }
+        int Height { get; set; }
         int Width { get; set; }
-        Data[,,] Data { get; set; }
+        Data[] Points { get; set; }
     }
 }

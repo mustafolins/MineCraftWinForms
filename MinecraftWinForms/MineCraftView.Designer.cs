@@ -45,6 +45,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "MineCraftView";
             this.Text = "MineCraftWinForms";
+            this.Load += new System.EventHandler(this.MineCraftView_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MineCraftView_Paint);
             this.ResumeLayout(false);
 

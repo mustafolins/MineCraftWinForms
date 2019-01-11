@@ -18,23 +18,40 @@ namespace MinecraftWinForms
             InitializeComponent();
         }
 
-        Object3d o = new Object3d(10, 10, 10);
+        Cube[] cubes;
+        Random rand = new Random();
+
+        private void MineCraftView_Load(object sender, EventArgs e)
+        {
+            cubes = new Cube[10];
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                cubes[i] = new Cube(new Point(rand.Next(0, Width), rand.Next(0, Height)), 
+                    Color.FromArgb(rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255)), 10, 10, 10); 
+            }
+        }
 
         private void MineCraftView_Paint(object sender, PaintEventArgs e)
         {
-            o.Paint(e.Graphics);
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                cubes[i].Paint(e.Graphics); 
+            }
         }
 
         private void ViewTimer_Tick(object sender, EventArgs e)
         {
-            TranslateObject3d(5, 2);
+            TranslateCubesRandomly();
         }
 
-        private void TranslateObject3d(int x, int y)
+        private void TranslateCubesRandomly()
         {
-            Invalidate(o.GetRect());
-            o.Translate(x, y);
-            Invalidate(o.GetRect());
+            for (int i = 0; i < cubes.Length; i++)
+            {
+                Invalidate(cubes[i].GetRect());
+                cubes[i].Translate(rand.Next(-9, 10), rand.Next(-9, 10));
+                Invalidate(cubes[i].GetRect()); 
+            }
         }
     }
 }
