@@ -8,11 +8,17 @@ using System.Windows.Forms;
 
 namespace MineCraftShared
 {
+    /// <summary>
+    /// Enum used for specifying a cube's side.
+    /// </summary>
     enum Side
     {
         FRONT, LEFT, RIGHT, TOP, BOTTOM, BACK
     }
 
+    /// <summary>
+    /// Class for creating/drawing a cube.
+    /// </summary>
     public class Cube : ICube
     {
         public int Width { get; set; }
@@ -24,7 +30,7 @@ namespace MineCraftShared
         /// <summary>
         /// Data Points
         /// </summary>
-        public Data[] Points { get; set; }
+        public CubeData[] Points { get; set; }
 
         public Point Location { get; set; }
         public Rotation Rot { get; set; }
@@ -38,64 +44,110 @@ namespace MineCraftShared
 
             Scale = scale;
 
-            Points = new Data[]
+            Points = new CubeData[]
             {
-                // todo: have some way of specifying depth with the points
-                new Data{ Point = new Point(0, 0), Place = Placement.FTL },    // front top left
-                new Data{ Point = new Point(Width, 0), Place = Placement.FTR },    // front top right
-                new Data{ Point = new Point(0, Height), Place = Placement.FBL },    // front bottom left
-                new Data{ Point = new Point(Width, Height), Place = Placement.FBR },    // front bottom right
+                new CubeData{ Point = new Vector(0, 0, 0), Place = Placement.FTL },    // front top left
+                new CubeData{ Point = new Vector(Width, 0, 0), Place = Placement.FTR },    // front top right
+                new CubeData{ Point = new Vector(0, Height, 0), Place = Placement.FBL },    // front bottom left
+                new CubeData{ Point = new Vector(Width, Height, 0), Place = Placement.FBR },    // front bottom right
                 // second side
-                new Data{ Point = new Point(0, 0), Place = Placement.BTL },    // bottom top left
-                new Data{ Point = new Point(Width, 0), Place = Placement.BTR },    // bottom top right
-                new Data{ Point = new Point(0, Height), Place = Placement.BBL },    // bottom bottom left
-                new Data{ Point = new Point(Width, Height), Place = Placement.BBR }     // bottom bottom right
+                new CubeData{ Point = new Vector(0, 0, Depth), Place = Placement.BTL },    // back top left
+                new CubeData{ Point = new Vector(Width, 0, Depth), Place = Placement.BTR },    // back top right
+                new CubeData{ Point = new Vector(0, Height, Depth), Place = Placement.BBL },    // back bottom left
+                new CubeData{ Point = new Vector(Width, Height, Depth), Place = Placement.BBR }     // back bottom right
             };
 
-            SetLocation(point.X, point.Y);
+            SetLocation(point.X, point.Y, 0);
             Rot = new Rotation { X = 0, Y = 0, Z = 0 };
 
             Color = color;
             SetColor(Color);
         }
 
-        private void SetLocation(int x, int y)
+        /// <summary>
+        /// Sets the location of the cube by incrementing all of the cube's points.
+        /// </summary>
+        /// <param name="x">X axis incrementation.</param>
+        /// <param name="y">Y axis incrementation.</param>
+        /// <param name="z">Z axis incrementation.</param>
+        private void SetLocation(int x, int y, int z)
         {
-            foreach (var point in Points)
+            foreach (var dataPoint in Points)
             {
-                point.Point = new Point { X = point.Point.X + x, Y = point.Point.Y + y };
+                dataPoint.Point = new Vector { X = dataPoint.Point.X + x, Y = dataPoint.Point.Y + y, Z = dataPoint.Point.Z + z };
             }
             Location = new Point { X = Location.X + x, Y = Location.Y + y };
         }
 
-        public Rectangle GetRect()
+        /// <summary>
+        /// Translates the cube by the give 3d coordinates.
+        /// </summary>
+        /// <param name="x">X axis translation.</param>
+        /// <param name="y">Y axis translation.</param>
+        /// <param name="z">Z axis translation.</param>
+        public void Translate(int x, int y, int z = 0)
         {
-            var tempRect = new Rectangle(new Point(Location.X - 5, Location.Y - 5), new Size(Width + 10, Height + 10));
+            SetLocation(x, y, z);
+        }
+
+        /// <summary>
+        /// Translates the cube by the given 3d point.
+        /// </summary>
+        /// <param name="point">The Point3d to translate the object by (used like a vector).</param>
+        public void Translate(Vector point)
+        {
+            SetLocation(point.X, point.Y, point.Z);
+        }
+
+        /// <summary>
+        /// Gets the Rectangle of the cube of which is being used in paint calls.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <returns>The Rectangle containing the cube.</returns>
+        public Rectangle GetRect(Form view)
+        {
+            var minPointX = Points.Min(p => p.Point.Get2dLocation(view).X);
+            var minPointY = Points.Min(p => p.Point.Get2dLocation(view).Y);
+            var maxPointX = Points.Max(p => p.Point.Get2dLocation(view).X);
+            var maxPointY = Points.Max(p => p.Point.Get2dLocation(view).Y);
+            var tempRect = new Rectangle(new Point(minPointX - 5, minPointY - 5),
+                new Size(maxPointX - minPointX + 15, maxPointY - minPointY + 15));
             return tempRect;
         }
 
-        public void Translate(int x, int y)
-        {
-            SetLocation(x, y);
-        }
-
+        /// <summary>
+        /// Sets the color of the cube.
+        /// </summary>
+        /// <param name="color">The color to be used.</param>
         public void SetColor(Color color)
         {
-            this.Color = color;
+            Color = color;
         }
 
-        public void Paint(Graphics g)
+        /// <summary>
+        /// Paints the cube with all of it's sides.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="g"></param>
+        public void Paint(Form view, Graphics g)
         {
             // todo: find way of displaying all sides
-            DrawSide(g, Side.FRONT);
-            DrawSide(g, Side.BACK);
-            DrawSide(g, Side.LEFT);
-            DrawSide(g, Side.RIGHT);
+            // todo: find a way to draw sides in the correct order
+            DrawSide(view, g, Side.FRONT);
+            DrawSide(view, g, Side.BACK);
+            DrawSide(view, g, Side.LEFT);
+            DrawSide(view, g, Side.RIGHT);
         }
 
-        private void DrawSide(Graphics g, Side side)
+        /// <summary>
+        /// Draws the given side.
+        /// </summary>
+        /// <param name="view">Form to draw use in 2d location calculations.</param>
+        /// <param name="g">Graphics object to draw/fill with.</param>
+        /// <param name="side">The side to get the points for drawing/filling from.</param>
+        private void DrawSide(Form view, Graphics g, Side side)
         {
-            var points = new Point[4];
+            var points = new Vector[4];
             switch (side)
             {
                 case Side.FRONT:
@@ -117,14 +169,27 @@ namespace MineCraftShared
                 default:
                     break;
             }
-            g.FillPolygon(new SolidBrush(Color), points);
+            try
+            {
+                // draw outline
+                g.DrawPolygon(new Pen(Color.FromArgb(Math.Abs(Color.R - 30), Math.Abs(Color.G - 30), Math.Abs(Color.B - 30))),
+                                                    (from point in points
+                                                     select point.Get2dLocation(view)).ToArray());
+                // fill polygon
+                g.FillPolygon(new SolidBrush(Color), (from point in points
+                                                      select point.Get2dLocation(view)).ToArray());
+            }
+            catch (OverflowException of)
+            {
+                // todo: find out why this is happening
+            }
         }
 
         #region Get Sides
 
-        private Point[] GetBackSide()
+        private Vector[] GetBackSide()
         {
-            var points = new Point[]
+            var points = new Vector[]
             {
                 Points.FirstOrDefault(d => d.Place == Placement.BTL).Point,
                 Points.FirstOrDefault(d => d.Place == Placement.BTR).Point,
@@ -134,9 +199,9 @@ namespace MineCraftShared
             return points;
         }
 
-        private Point[] GetRightSide()
+        private Vector[] GetRightSide()
         {
-            var points = new Point[]
+            var points = new Vector[]
             {
                 Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,
                 Points.FirstOrDefault(d => d.Place == Placement.FBR).Point,
@@ -146,9 +211,9 @@ namespace MineCraftShared
             return points;
         }
 
-        private Point[] GetLeftSide()
+        private Vector[] GetLeftSide()
         {
-            var points = new Point[]
+            var points = new Vector[]
             {
                 Points.FirstOrDefault(d => d.Place == Placement.FTL).Point,
                 Points.FirstOrDefault(d => d.Place == Placement.FBL).Point,
@@ -158,9 +223,9 @@ namespace MineCraftShared
             return points;
         }
 
-        private Point[] GetFrontSide()
+        private Vector[] GetFrontSide()
         {
-            var points = new Point[]
+            var points = new Vector[]
             {
                 Points.FirstOrDefault(d => d.Place == Placement.FTL).Point,
                 Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,

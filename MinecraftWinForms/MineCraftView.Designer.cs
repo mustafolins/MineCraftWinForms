@@ -42,11 +42,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "MineCraftView";
             this.Text = "MineCraftWinForms";
             this.Load += new System.EventHandler(this.MineCraftView_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MineCraftView_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MineCraftView_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MineCraftView_KeyUp);
             this.ResumeLayout(false);
 
         }

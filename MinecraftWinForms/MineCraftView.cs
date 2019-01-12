@@ -18,40 +18,64 @@ namespace MinecraftWinForms
             InitializeComponent();
         }
 
-        Cube[] cubes;
-        Random rand = new Random();
+        public Keys Key { get; set; }
+        public MineCraftController MineCraftController { get; set; }
 
         private void MineCraftView_Load(object sender, EventArgs e)
         {
-            cubes = new Cube[10];
-            for (int i = 0; i < cubes.Length; i++)
-            {
-                cubes[i] = new Cube(new Point(rand.Next(0, Width), rand.Next(0, Height)), 
-                    Color.FromArgb(rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255)), 10, 10, 10); 
-            }
+            MineCraftController = new MineCraftController(this);
         }
 
         private void MineCraftView_Paint(object sender, PaintEventArgs e)
         {
-            for (int i = 0; i < cubes.Length; i++)
-            {
-                cubes[i].Paint(e.Graphics); 
-            }
+            MineCraftController.Paint(this, e.Graphics);
         }
 
         private void ViewTimer_Tick(object sender, EventArgs e)
         {
-            TranslateCubesRandomly();
+            //TranslateCubesRandomly();
+            TranslateCube();
         }
 
-        private void TranslateCubesRandomly()
+        private void TranslateCube()
         {
-            for (int i = 0; i < cubes.Length; i++)
+            switch (Key)
             {
-                Invalidate(cubes[i].GetRect());
-                cubes[i].Translate(rand.Next(-9, 10), rand.Next(-9, 10));
-                Invalidate(cubes[i].GetRect()); 
+                case Keys.Left:
+                case Keys.A:
+                    MineCraftController.Translate(this, -5, 0);
+                    break;
+                case Keys.Up:
+                case Keys.W:
+                    MineCraftController.Translate(this, 0, -5);
+                    break;
+                case Keys.Down:
+                case Keys.S:
+                    MineCraftController.Translate(this, 0, 5);
+                    break;
+                case Keys.Right:
+                case Keys.D:
+                    MineCraftController.Translate(this, 5, 0);
+                    break;
+                case Keys.E:
+                    MineCraftController.Translate(this, 0, 0, 5);
+                    break;
+                case Keys.Q:
+                    MineCraftController.Translate(this, 0, 0, -5);
+                    break;
+                default:
+                    break;
             }
+        }
+
+        private void MineCraftView_KeyDown(object sender, KeyEventArgs e)
+        {
+            Key = e.KeyCode;
+        }
+
+        private void MineCraftView_KeyUp(object sender, KeyEventArgs e)
+        {
+            Key = Keys.None;
         }
     }
 }
