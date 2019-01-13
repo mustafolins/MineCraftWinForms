@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace MineCraftShared
 {
     /// <summary>
-    /// A representation of a 3d point.
+    /// A representation of a vector.
     /// </summary>
     [DebuggerDisplay("X={X}; Y={Y}; Z={Z}")]
     public class Vector : IVector, IComparable
@@ -56,9 +56,9 @@ namespace MineCraftShared
         {
             if (Z != 0)
             {
-                int width = view.Width / 2, height = view.Height / 2;
+                float width = view.Width * 0.5f, height = view.Height * 0.5f;
 
-                var slope = ((float)height - (float)Y) / ((float)width - (float)X);
+                var slope = (height - Y) / (width - X);
 
                 var k = (Z / (Math.Sqrt((double)1 + slope * slope))) * (X < width ? -1 : 1);
                 var offsetX = k * 1;

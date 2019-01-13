@@ -30,13 +30,20 @@
         {
             this.components = new System.ComponentModel.Container();
             this.ViewTimer = new System.Windows.Forms.Timer(this.components);
+            this.Invalidater = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // ViewTimer
             // 
             this.ViewTimer.Enabled = true;
-            this.ViewTimer.Interval = 80;
+            this.ViewTimer.Interval = 42;
             this.ViewTimer.Tick += new System.EventHandler(this.ViewTimer_Tick);
+            // 
+            // Invalidater
+            // 
+            this.Invalidater.Enabled = true;
+            this.Invalidater.Interval = 1000;
+            this.Invalidater.Tick += new System.EventHandler(this.Invalidater_Tick);
             // 
             // MineCraftView
             // 
@@ -57,6 +64,7 @@
         #endregion
 
         private System.Windows.Forms.Timer ViewTimer;
+        private System.Windows.Forms.Timer Invalidater;
     }
 }
 

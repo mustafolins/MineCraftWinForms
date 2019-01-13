@@ -23,6 +23,11 @@ namespace MinecraftWinForms
 
         private void MineCraftView_Load(object sender, EventArgs e)
         {
+            // use this style settings for reduced flicker
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.UserPaint, true);
+
             MineCraftController = new MineCraftController(this);
         }
 
@@ -39,29 +44,30 @@ namespace MinecraftWinForms
 
         private void TranslateCube()
         {
+            var distance = 5;
             switch (Key)
             {
                 case Keys.Left:
                 case Keys.A:
-                    MineCraftController.Translate(this, -5, 0);
+                    MineCraftController.Translate(this, -distance, 0);
                     break;
                 case Keys.Up:
                 case Keys.W:
-                    MineCraftController.Translate(this, 0, -5);
+                    MineCraftController.Translate(this, 0, -distance);
                     break;
                 case Keys.Down:
                 case Keys.S:
-                    MineCraftController.Translate(this, 0, 5);
+                    MineCraftController.Translate(this, 0, distance);
                     break;
                 case Keys.Right:
                 case Keys.D:
-                    MineCraftController.Translate(this, 5, 0);
+                    MineCraftController.Translate(this, distance, 0);
                     break;
                 case Keys.E:
-                    MineCraftController.Translate(this, 0, 0, 5);
+                    MineCraftController.Translate(this, 0, 0, distance);
                     break;
                 case Keys.Q:
-                    MineCraftController.Translate(this, 0, 0, -5);
+                    MineCraftController.Translate(this, 0, 0, -distance);
                     break;
                 default:
                     break;
@@ -76,6 +82,11 @@ namespace MinecraftWinForms
         private void MineCraftView_KeyUp(object sender, KeyEventArgs e)
         {
             Key = Keys.None;
+        }
+
+        private void Invalidater_Tick(object sender, EventArgs e)
+        {
+            Invalidate();
         }
     }
 }

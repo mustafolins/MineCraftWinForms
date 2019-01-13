@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MineCraftShared
 {
     /// <summary>
-    /// Cube data class used for keeping track of a 3d point and the placement of the point on the cube.
+    /// Cube data class used for keeping track of a vector and the placement of the point on the cube.
     /// </summary>
     [DebuggerDisplay("X={Point.X}; Y={Point.Y}; Z={Point.Z}; Place={Place}")]
     public class CubeData : ICubeData

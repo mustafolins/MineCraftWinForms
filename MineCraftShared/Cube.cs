@@ -91,12 +91,12 @@ namespace MineCraftShared
         }
 
         /// <summary>
-        /// Translates the cube by the given 3d point.
+        /// Translates the cube by the given vector.
         /// </summary>
-        /// <param name="point">The Point3d to translate the object by (used like a vector).</param>
-        public void Translate(Vector point)
+        /// <param name="vector">The Vector to translate the object by.</param>
+        public void Translate(Vector vector)
         {
-            SetLocation(point.X, point.Y, point.Z);
+            SetLocation(vector.X, vector.Y, vector.Z);
         }
 
         /// <summary>
@@ -131,12 +131,14 @@ namespace MineCraftShared
         /// <param name="g"></param>
         public void Paint(Form view, Graphics g)
         {
-            // todo: find way of displaying all sides
             // todo: find a way to draw sides in the correct order
             DrawSide(view, g, Side.FRONT);
+            // todo: I don't think I ever need to draw this one.
             DrawSide(view, g, Side.BACK);
             DrawSide(view, g, Side.LEFT);
             DrawSide(view, g, Side.RIGHT);
+            DrawSide(view, g, Side.BOTTOM);
+            DrawSide(view, g, Side.TOP);
         }
 
         /// <summary>
@@ -160,8 +162,10 @@ namespace MineCraftShared
                     points = GetRightSide();
                     break;
                 case Side.TOP:
+                    points = GetTopSide();
                     break;
                 case Side.BOTTOM:
+                    points = GetBottomSide();
                     break;
                 case Side.BACK:
                     points = GetBackSide();
@@ -171,13 +175,11 @@ namespace MineCraftShared
             }
             try
             {
+                var points2d = Get2dPoints(view, points);
                 // draw outline
-                g.DrawPolygon(new Pen(Color.FromArgb(Math.Abs(Color.R - 30), Math.Abs(Color.G - 30), Math.Abs(Color.B - 30))),
-                                                    (from point in points
-                                                     select point.Get2dLocation(view)).ToArray());
+                g.DrawPolygon(GetOutline(), points2d);
                 // fill polygon
-                g.FillPolygon(new SolidBrush(Color), (from point in points
-                                                      select point.Get2dLocation(view)).ToArray());
+                g.FillPolygon(new SolidBrush(Color), points2d);
             }
             catch (OverflowException of)
             {
@@ -185,7 +187,55 @@ namespace MineCraftShared
             }
         }
 
+        /// <summary>
+        /// Gets an array of the 2d points for the cube.
+        /// </summary>
+        /// <param name="view">Form to do 2d calcuation on.</param>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        private Point[] Get2dPoints(Form view, Vector[] points)
+        {
+            return (from point in points
+                    select point.Get2dLocation(view)).ToArray();
+        }
+
+        /// <summary>
+        /// Gets a cool outline based of the cube's Color.
+        /// </summary>
+        /// <returns></returns>
+        public Pen GetOutline()
+        {
+            var red = Math.Abs(-1 * Color.R - 30);
+            var green = Math.Abs(-1 * Color.G - 30);
+            var blue = Math.Abs(-1 * Color.B - 30);
+            return new Pen(Color.FromArgb(red < 255 ? red : 255, green < 255 ? green : 255, blue < 255 ? blue : 255));
+        }
+
         #region Get Sides
+        
+        private Vector[] GetTopSide()
+        {
+            var points = new Vector[]
+            {
+                Points.FirstOrDefault(d => d.Place == Placement.BTL).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.BTR).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.FTL).Point
+            };
+            return points;
+        }
+
+        private Vector[] GetBottomSide()
+        {
+            var points = new Vector[]
+            {
+                Points.FirstOrDefault(d => d.Place == Placement.BBL).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.BBR).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.FBR).Point,
+                Points.FirstOrDefault(d => d.Place == Placement.FBL).Point
+            };
+            return points;
+        }
 
         private Vector[] GetBackSide()
         {
