@@ -72,6 +72,15 @@ namespace MineCraftShared
             //view.Invalidate(c.GetRect(view));
         }
 
+        public void Rotate(Form view, int x, int y, int z)
+        {
+            foreach (var cube in Cubes)
+            {
+                cube.Rotate(x, y, z);
+            }
+            view.Invalidate();
+        }
+
         /// <summary>
         /// Translates game objects randomly.
         /// </summary>

@@ -46,15 +46,15 @@ namespace MineCraftShared
 
             Points = new CubeData[]
             {
-                new CubeData{ Point = new Vector(0, 0, 0), Place = Placement.FTL },    // front top left
-                new CubeData{ Point = new Vector(Width, 0, 0), Place = Placement.FTR },    // front top right
-                new CubeData{ Point = new Vector(0, Height, 0), Place = Placement.FBL },    // front bottom left
-                new CubeData{ Point = new Vector(Width, Height, 0), Place = Placement.FBR },    // front bottom right
+                new CubeData(new Vector(0, 0, 0), Placement.FTL),    // front top left
+                new CubeData(new Vector(Width, 0, 0), Placement.FTR),    // front top right
+                new CubeData(new Vector(0, Height, 0), Placement.FBL),    // front bottom left
+                new CubeData(new Vector(Width, Height, 0), Placement.FBR),    // front bottom right
                 // second side
-                new CubeData{ Point = new Vector(0, 0, Depth), Place = Placement.BTL },    // back top left
-                new CubeData{ Point = new Vector(Width, 0, Depth), Place = Placement.BTR },    // back top right
-                new CubeData{ Point = new Vector(0, Height, Depth), Place = Placement.BBL },    // back bottom left
-                new CubeData{ Point = new Vector(Width, Height, Depth), Place = Placement.BBR }     // back bottom right
+                new CubeData(new Vector(0, 0, Depth), Placement.BTL),    // back top left
+                new CubeData(new Vector(Width, 0, Depth), Placement.BTR),    // back top right
+                new CubeData(new Vector(0, Height, Depth), Placement.BBL),    // back bottom left
+                new CubeData(new Vector(Width, Height, Depth), Placement.BBR)     // back bottom right
             };
 
             SetLocation(point.X, point.Y, 0);
@@ -74,9 +74,23 @@ namespace MineCraftShared
         {
             foreach (var dataPoint in Points)
             {
-                dataPoint.Point = new Vector { X = dataPoint.Point.X + x, Y = dataPoint.Point.Y + y, Z = dataPoint.Point.Z + z };
+                dataPoint.X = dataPoint.X + x;
+                dataPoint.Y = dataPoint.Y + y;
+                dataPoint.Z = dataPoint.Z + z;
             }
             Location = new Point { X = Location.X + x, Y = Location.Y + y };
+        }
+
+        public void Rotate(int x, int y, int z)
+        {
+            Rot.X += x;
+            Rot.Y += y;
+            Rot.Z += z;
+
+            foreach (var data in Points)
+            {
+                data.GlobalRot = Rot;
+            }
         }
 
         /// <summary>
@@ -106,10 +120,10 @@ namespace MineCraftShared
         /// <returns>The Rectangle containing the cube.</returns>
         public Rectangle GetRect(Form view)
         {
-            var minPointX = Points.Min(p => p.Point.Get2dLocation(view).X);
-            var minPointY = Points.Min(p => p.Point.Get2dLocation(view).Y);
-            var maxPointX = Points.Max(p => p.Point.Get2dLocation(view).X);
-            var maxPointY = Points.Max(p => p.Point.Get2dLocation(view).Y);
+            var minPointX = Points.Min(p => p.Get2dLocation(view).X);
+            var minPointY = Points.Min(p => p.Get2dLocation(view).Y);
+            var maxPointX = Points.Max(p => p.Get2dLocation(view).X);
+            var maxPointY = Points.Max(p => p.Get2dLocation(view).Y);
             var tempRect = new Rectangle(new Point(minPointX - 5, minPointY - 5),
                 new Size(maxPointX - minPointX + 15, maxPointY - minPointY + 15));
             return tempRect;
@@ -149,7 +163,7 @@ namespace MineCraftShared
         /// <param name="side">The side to get the points for drawing/filling from.</param>
         private void DrawSide(Form view, Graphics g, Side side)
         {
-            var points = new Vector[4];
+            var points = new CubeData[4];
             switch (side)
             {
                 case Side.FRONT:
@@ -193,7 +207,7 @@ namespace MineCraftShared
         /// <param name="view">Form to do 2d calcuation on.</param>
         /// <param name="points"></param>
         /// <returns></returns>
-        private Point[] Get2dPoints(Form view, Vector[] points)
+        private Point[] Get2dPoints(Form view, CubeData[] points)
         {
             return (from point in points
                     select point.Get2dLocation(view)).ToArray();
@@ -213,74 +227,74 @@ namespace MineCraftShared
 
         #region Get Sides
         
-        private Vector[] GetTopSide()
+        private CubeData[] GetTopSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.BTL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BTR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FTL).Point
+                Points.FirstOrDefault(d => d.Place == Placement.BTL),
+                Points.FirstOrDefault(d => d.Place == Placement.BTR),
+                Points.FirstOrDefault(d => d.Place == Placement.FTR),
+                Points.FirstOrDefault(d => d.Place == Placement.FTL)
             };
             return points;
         }
 
-        private Vector[] GetBottomSide()
+        private CubeData[] GetBottomSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.BBL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBL).Point
+                Points.FirstOrDefault(d => d.Place == Placement.BBL),
+                Points.FirstOrDefault(d => d.Place == Placement.BBR),
+                Points.FirstOrDefault(d => d.Place == Placement.FBR),
+                Points.FirstOrDefault(d => d.Place == Placement.FBL)
             };
             return points;
         }
 
-        private Vector[] GetBackSide()
+        private CubeData[] GetBackSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.BTL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BTR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BBL).Point
+                Points.FirstOrDefault(d => d.Place == Placement.BTL),
+                Points.FirstOrDefault(d => d.Place == Placement.BTR),
+                Points.FirstOrDefault(d => d.Place == Placement.BBR),
+                Points.FirstOrDefault(d => d.Place == Placement.BBL)
             };
             return points;
         }
 
-        private Vector[] GetRightSide()
+        private CubeData[] GetRightSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BTR).Point
+                Points.FirstOrDefault(d => d.Place == Placement.FTR),
+                Points.FirstOrDefault(d => d.Place == Placement.FBR),
+                Points.FirstOrDefault(d => d.Place == Placement.BBR),
+                Points.FirstOrDefault(d => d.Place == Placement.BTR)
             };
             return points;
         }
 
-        private Vector[] GetLeftSide()
+        private CubeData[] GetLeftSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.FTL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BBL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.BTL).Point
+                Points.FirstOrDefault(d => d.Place == Placement.FTL),
+                Points.FirstOrDefault(d => d.Place == Placement.FBL),
+                Points.FirstOrDefault(d => d.Place == Placement.BBL),
+                Points.FirstOrDefault(d => d.Place == Placement.BTL)
             };
             return points;
         }
 
-        private Vector[] GetFrontSide()
+        private CubeData[] GetFrontSide()
         {
-            var points = new Vector[]
+            var points = new CubeData[]
             {
-                Points.FirstOrDefault(d => d.Place == Placement.FTL).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FTR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBR).Point,
-                Points.FirstOrDefault(d => d.Place == Placement.FBL).Point
+                Points.FirstOrDefault(d => d.Place == Placement.FTL),
+                Points.FirstOrDefault(d => d.Place == Placement.FTR),
+                Points.FirstOrDefault(d => d.Place == Placement.FBR),
+                Points.FirstOrDefault(d => d.Place == Placement.FBL)
             };
             return points;
         }

@@ -69,6 +69,18 @@ namespace MinecraftWinForms
                 case Keys.Q:
                     MineCraftController.Translate(this, 0, 0, -distance);
                     break;
+                case Keys.NumPad4:
+                    MineCraftController.Rotate(this, 0, 5, 0);
+                    break;
+                case Keys.NumPad6:
+                    MineCraftController.Rotate(this, 0, -5, 0);
+                    break;
+                case Keys.NumPad8:
+                    MineCraftController.Rotate(this, 5, 0, 0);
+                    break;
+                case Keys.NumPad2:
+                    MineCraftController.Rotate(this, -5, 0, 0);
+                    break;
                 default:
                     break;
             }

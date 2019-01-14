@@ -47,29 +47,6 @@ namespace MineCraftShared
                    Z == d.Z;
         }
 
-        /// <summary>
-        /// Gets the 2d location of this vector based on the views center.
-        /// </summary>
-        /// <param name="view"></param>
-        /// <returns></returns>
-        public Point Get2dLocation(Form view)
-        {
-            if (Z != 0)
-            {
-                float width = view.Width * 0.5f, height = view.Height * 0.5f;
-
-                var slope = (height - Y) / (width - X);
-
-                var k = (Z / (Math.Sqrt((double)1 + slope * slope))) * (X < width ? -1 : 1);
-                var offsetX = k * 1;
-                var offsetY = k * slope;
-
-                return new Point { X = X + (int)Math.Round(offsetX), Y = Y + (int)Math.Round(offsetY)};
-            }
-            else
-                return new Point { X = X, Y = Y };
-        }
-
         public override int GetHashCode()
         {
             var hashCode = -307843816;

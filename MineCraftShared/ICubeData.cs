@@ -4,7 +4,6 @@ namespace MineCraftShared
 {
     public interface ICubeData
     {
-        Vector Point { get; set; }
         Placement Place { get; set; }
     }
 
