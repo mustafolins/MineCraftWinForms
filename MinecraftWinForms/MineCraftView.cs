@@ -33,57 +33,60 @@ namespace MinecraftWinForms
 
         private void MineCraftView_Paint(object sender, PaintEventArgs e)
         {
-            MineCraftController.Paint(this, e.Graphics);
+            MineCraftController.Paint(e.Graphics);
         }
 
         private void ViewTimer_Tick(object sender, EventArgs e)
         {
             //TranslateCubesRandomly();
-            TranslateCube();
+            if (ProcessControls())
+                Update();
         }
 
-        private void TranslateCube()
+        private bool ProcessControls()
         {
+            bool processed = true;
             var distance = 5;
             switch (Key)
             {
                 case Keys.Left:
                 case Keys.A:
-                    MineCraftController.Translate(this, -distance, 0);
+                    MineCraftController.Translate(-distance, 0);
                     break;
                 case Keys.Up:
                 case Keys.W:
-                    MineCraftController.Translate(this, 0, -distance);
+                    MineCraftController.Translate(0, -distance);
                     break;
                 case Keys.Down:
                 case Keys.S:
-                    MineCraftController.Translate(this, 0, distance);
+                    MineCraftController.Translate(0, distance);
                     break;
                 case Keys.Right:
                 case Keys.D:
-                    MineCraftController.Translate(this, distance, 0);
+                    MineCraftController.Translate(distance, 0);
                     break;
                 case Keys.E:
-                    MineCraftController.Translate(this, 0, 0, distance);
+                    MineCraftController.Translate(0, 0, distance);
                     break;
                 case Keys.Q:
-                    MineCraftController.Translate(this, 0, 0, -distance);
+                    MineCraftController.Translate(0, 0, -distance);
                     break;
                 case Keys.NumPad4:
-                    MineCraftController.Rotate(this, 0, 5, 0);
+                    MineCraftController.Rotate(0, distance, 0);
                     break;
                 case Keys.NumPad6:
-                    MineCraftController.Rotate(this, 0, -5, 0);
+                    MineCraftController.Rotate(0, -distance, 0);
                     break;
                 case Keys.NumPad8:
-                    MineCraftController.Rotate(this, 5, 0, 0);
+                    MineCraftController.Rotate(distance, 0, 0);
                     break;
                 case Keys.NumPad2:
-                    MineCraftController.Rotate(this, -5, 0, 0);
+                    MineCraftController.Rotate(-distance, 0, 0);
                     break;
                 default:
-                    break;
+                    return false;
             }
+            return processed;
         }
 
         private void MineCraftView_KeyDown(object sender, KeyEventArgs e)

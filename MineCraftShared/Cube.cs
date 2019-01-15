@@ -36,7 +36,7 @@ namespace MineCraftShared
         public Rotation Rot { get; set; }
         public Color Color { get; set; }
 
-        public Cube(Point point, Color color, int width, int height, int depth, int scale = 1)
+        public Cube(Vector point, Color color, int width, int height, int depth, int scale = 1)
         {
             Width = width;
             Height = height;
@@ -57,11 +57,26 @@ namespace MineCraftShared
                 new CubeData(new Vector(Width, Height, Depth), Placement.BBR)     // back bottom right
             };
 
-            SetLocation(point.X, point.Y, 0);
+            SetLocation(point.X, point.Y, point.Z);
             Rot = new Rotation { X = 0, Y = 0, Z = 0 };
 
             Color = color;
             SetColor(Color);
+        }
+
+        public int ActualDepth()
+        {
+            return Points.FirstOrDefault(p => p.Z == Points.Max(p2 => p2.Z)).ActualDepth();
+        }
+
+        public int ActualX()
+        {
+            return Points.FirstOrDefault(p => p.X == Points.Max(p2 => p2.X)).ActualX();
+        }
+
+        public int ActualY()
+        {
+            return Points.FirstOrDefault(p => p.Y == Points.Max(p2 => p2.Y)).ActualY();
         }
 
         /// <summary>
@@ -79,6 +94,13 @@ namespace MineCraftShared
                 dataPoint.Z = dataPoint.Z + z;
             }
             Location = new Point { X = Location.X + x, Y = Location.Y + y };
+        }
+
+        public bool InFieldOfView(Size size)
+        {
+            return (from point in Points
+                    where point.InFieldOfView(size)
+                    select point).Count() > 0;
         }
 
         public void Rotate(int x, int y, int z)
@@ -116,14 +138,14 @@ namespace MineCraftShared
         /// <summary>
         /// Gets the Rectangle of the cube of which is being used in paint calls.
         /// </summary>
-        /// <param name="view"></param>
+        /// <param name="size"></param>
         /// <returns>The Rectangle containing the cube.</returns>
-        public Rectangle GetRect(Form view)
+        public Rectangle GetRect(Size size)
         {
-            var minPointX = Points.Min(p => p.Get2dLocation(view).X);
-            var minPointY = Points.Min(p => p.Get2dLocation(view).Y);
-            var maxPointX = Points.Max(p => p.Get2dLocation(view).X);
-            var maxPointY = Points.Max(p => p.Get2dLocation(view).Y);
+            var minPointX = Points.Min(p => p.Get2dLocation(size).X);
+            var minPointY = Points.Min(p => p.Get2dLocation(size).Y);
+            var maxPointX = Points.Max(p => p.Get2dLocation(size).X);
+            var maxPointY = Points.Max(p => p.Get2dLocation(size).Y);
             var tempRect = new Rectangle(new Point(minPointX - 5, minPointY - 5),
                 new Size(maxPointX - minPointX + 15, maxPointY - minPointY + 15));
             return tempRect;
@@ -141,27 +163,27 @@ namespace MineCraftShared
         /// <summary>
         /// Paints the cube with all of it's sides.
         /// </summary>
-        /// <param name="view"></param>
+        /// <param name="size"></param>
         /// <param name="g"></param>
-        public void Paint(Form view, Graphics g)
+        public void Paint(Size size, Graphics g)
         {
             // todo: find a way to draw sides in the correct order
-            DrawSide(view, g, Side.FRONT);
+            DrawSide(size, g, Side.FRONT);
             // todo: I don't think I ever need to draw this one.
-            DrawSide(view, g, Side.BACK);
-            DrawSide(view, g, Side.LEFT);
-            DrawSide(view, g, Side.RIGHT);
-            DrawSide(view, g, Side.BOTTOM);
-            DrawSide(view, g, Side.TOP);
+            DrawSide(size, g, Side.BACK);
+            DrawSide(size, g, Side.LEFT);
+            DrawSide(size, g, Side.RIGHT);
+            DrawSide(size, g, Side.BOTTOM);
+            DrawSide(size, g, Side.TOP);
         }
 
         /// <summary>
         /// Draws the given side.
         /// </summary>
-        /// <param name="view">Form to draw use in 2d location calculations.</param>
+        /// <param name="size">Form to draw use in 2d location calculations.</param>
         /// <param name="g">Graphics object to draw/fill with.</param>
         /// <param name="side">The side to get the points for drawing/filling from.</param>
-        private void DrawSide(Form view, Graphics g, Side side)
+        private void DrawSide(Size size, Graphics g, Side side)
         {
             var points = new CubeData[4];
             switch (side)
@@ -189,7 +211,7 @@ namespace MineCraftShared
             }
             try
             {
-                var points2d = Get2dPoints(view, points);
+                var points2d = Get2dPoints(size, points);
                 // draw outline
                 g.DrawPolygon(GetOutline(), points2d);
                 // fill polygon
@@ -204,13 +226,13 @@ namespace MineCraftShared
         /// <summary>
         /// Gets an array of the 2d points for the cube.
         /// </summary>
-        /// <param name="view">Form to do 2d calcuation on.</param>
+        /// <param name="size">Form to do 2d calcuation on.</param>
         /// <param name="points"></param>
         /// <returns></returns>
-        private Point[] Get2dPoints(Form view, CubeData[] points)
+        private Point[] Get2dPoints(Size size, CubeData[] points)
         {
             return (from point in points
-                    select point.Get2dLocation(view)).ToArray();
+                    select point.Get2dLocation(size)).ToArray();
         }
 
         /// <summary>
